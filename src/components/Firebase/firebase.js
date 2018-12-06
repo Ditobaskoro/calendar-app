@@ -18,8 +18,6 @@ class Firebase {
     this.auth = app.auth();
     this.db = app.database();
   }
-
-  events = () => this.db.ref(`events`);
 }
 
 export default Firebase;

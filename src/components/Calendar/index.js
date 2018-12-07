@@ -10,17 +10,20 @@ export default class Calendar extends Component {
     selectedDate: new Date(),
     events: [],
     currentEvent: {
+      id: null,
       day: null,
       name: '',
       time: moment('00:00:00', 'HH:mm:ss'),
-      invitees: []
+      invitees: [],
+      color: '',
     },
     index: null,
     modal1: false,
   };
   componentDidMount() {
+    //get data from localstorage
     const data = localStorage.getItem('data');
-    if(data){
+    if(data && data.length > 0){
       this.setState({
         events: JSON.parse(data),
       })
@@ -42,6 +45,7 @@ export default class Calendar extends Component {
       this.setState({
         events: arr,
         currentEvent: {
+          id: null,
           day: null,
           name: '',
           time: moment('00:00:00', 'HH:mm:ss'),
@@ -73,6 +77,7 @@ export default class Calendar extends Component {
       modal1: false,
       events: arr,
       currentEvent: {
+        id: null,
         day: null,
         name: '',
         time: moment('00:00:00', 'HH:mm:ss'),
@@ -83,12 +88,22 @@ export default class Calendar extends Component {
   }
   handleCancel = (e) => {
     this.setState({
+      currentEvent: {
+        id: null,
+        day: null,
+        name: '',
+        time: moment('00:00:00', 'HH:mm:ss'),
+        invitees: []
+      },
+      index: null,
       modal1: false,
     });
   }
   
   onNameChange = (e) => {
     let currentEvent = Object.assign({}, this.state.currentEvent);
+    const id = this.state.events.length - 1;
+    currentEvent.id = id;
     currentEvent.name = e.target.value;
     currentEvent.day = this.state.selectedDate;
     this.setState({currentEvent})
@@ -106,9 +121,9 @@ export default class Calendar extends Component {
   renderHeader() {
     const dateFormat = "MMMM YYYY";
     return (
-      <div className="header row flex-middle">
+      <div className="main-header header row flex-middle">
         <div className="col col-center">
-          <span>
+          <span className="header-title">
             {dateFns.format(this.state.currentMonth, dateFormat)}
           </span>
         </div>
@@ -136,7 +151,7 @@ export default class Calendar extends Component {
     const monthEnd = dateFns.endOfMonth(monthStart);
     const startDate = dateFns.startOfWeek(monthStart);
     const endDate = dateFns.endOfWeek(monthEnd);
-
+     
     const dateFormat = "D";
     const rows = [];
 
@@ -149,7 +164,22 @@ export default class Calendar extends Component {
         formattedDate = dateFns.format(day, dateFormat);
         const cloneDay = day;
         const todayEvents = [];
+
+        //check today events
         events.map(item => dateFns.isSameDay(item.day, cloneDay) && todayEvents.push(item));
+        
+        //randomizecolors
+        const colors = ['#FDD14A','#F3923D','#EE585C','#1D8583','#3295F9'];
+        const shuffled = colors.sort(() => .5 - Math.random());  
+        let colorSet = shuffled.slice(0,3) ;
+        let eventCount = todayEvents.length;
+        let bgColor = eventCount === 1 ? `linear-gradient(${colorSet[eventCount-1]}, ${colorSet[eventCount-1]})`
+        : eventCount === 2 ? `linear-gradient(${colorSet[eventCount-2]}, ${colorSet[eventCount-1]})`
+        : eventCount === 3 ? `linear-gradient(${colorSet[eventCount-3]}, ${colorSet[eventCount-2]}, ${colorSet[eventCount-1]})`
+        : '';
+        let numColor = eventCount > 0 ? '#fff' : '';
+
+
         days.push(
           <div
             className={`col cell ${
@@ -158,14 +188,15 @@ export default class Calendar extends Component {
                 : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
             }`}
             key={day}
-            onClick={() => todayEvents.length < 3 && this.onDateClick(dateFns.parse(cloneDay))}
+            style={{background: bgColor}}
+            onClick={() => eventCount < 3 && this.onDateClick(dateFns.parse(cloneDay))}
           >
-            <span className="number">{formattedDate}</span>
+            <span style={{color: numColor}} className="number">{formattedDate}</span>
             <div className="event-div">
-              {events.map((item,i) => {
+              {todayEvents.map((item,i) => {
                 if(dateFns.isSameDay(item.day, cloneDay)){
-                  return <li key={i} onClick={() => this.editEvent(item,i)} className="event">{item.name}</li>;
-                }  
+                  return <li style={{backgroundColor:colorSet[i]}} key={i} onClick={() => this.editEvent(item,item.id)} className="event">{item.name}</li>;
+                }
               })}
             </div>
           </div>

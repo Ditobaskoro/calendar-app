@@ -5,6 +5,7 @@
   --border-color: #eee;
   --bg-color: #f9f9f9;
   --neutral-color: #fff;
+  --yellow-color: #FDD14A;
 }
 
 * {
@@ -151,23 +152,27 @@ header {
   margin-top: 1.5em;
   list-style-type: none;
 }
+
 .calendar .body .cell .event {
-  background-color: #E85748;
   font-size: 80%;
   border: .5px solid #fff;
   border-radius: 3px;
   color: #fff;
   padding-left: 2px;
 }
-.event-div li:nth-child(2) {
-  background-color: #EFAF4D !important;
+
+.main-header {
+  background-color: var(--yellow-color);
 }
-.event-div li:nth-child(3) {
-  background-color: #58B79F !important;
+
+.header-title {
+  color: #000;
 }
+
 .form-title {
   margin-top: 1em;
 }
+
 .form-button {
   margin-top: 1em;
 }

@@ -32,8 +32,8 @@ header {
 .app {
   display: block;
   margin: 0 auto;
-  margin-top: 5vh;
-  max-width: 70vw;
+  margin-top: 1em;
+  max-width: 50em;
 }
 
 /* GRID */
@@ -90,16 +90,23 @@ header {
   padding: 1.5em 0;
   border-bottom: 1px solid var(--border-color);
 }
-
 .calendar .days {
   text-transform: uppercase;
   font-weight: 400;
   color: var(--text-color-light);
-  font-size: 70%;
   padding: .75em 0;
   border-bottom: 1px solid var(--border-color);
 }
-
+@media screen and (min-width: 1028px) {
+  .calendar .days {
+    font-size: 70%;
+  }
+}
+@media screen and (max-width: 1028px) {
+  .calendar .days {
+    font-size: 50%;
+  }
+}
 .calendar .body .cell {
   position: relative;
   height: 5.5em;
